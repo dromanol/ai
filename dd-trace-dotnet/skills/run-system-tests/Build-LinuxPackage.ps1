@@ -66,8 +66,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$DOTNETSDK_VERSION = '10.0.100'
-
 # Resolve the dd-trace-dotnet repo from the CURRENT directory, not the script location: this file is a
 # managed copy under <clone>\.claude\skills\, so $PSScriptRoot says nothing about which repos to build.
 # Claude normally runs inside the tracer repo (or its git root). Override with -DdTraceRoot / $env:DD_TRACE_ROOT.
@@ -93,6 +91,8 @@ if (-not (Test-DdTraceRoot $DdTraceRoot)) {
 }
 $ROOT_DIR = (Resolve-Path $DdTraceRoot).Path
 $BUILD_DIR = Join-Path $ROOT_DIR 'tracer/build/_build'
+# Use the SDK the repo pins: a hardcoded version breaks the restore as soon as the repo targets a newer TFM.
+$DOTNETSDK_VERSION = (Get-Content -Raw (Join-Path $ROOT_DIR 'global.json') | ConvertFrom-Json).sdk.version
 $ArchId = $Arch  # UnixArchitectureIdentifier: x64 / arm64
 $OutputDir = Join-Path $ROOT_DIR "tracer/bin/artifacts/linux-$ArchId"
 
@@ -142,6 +142,8 @@ function Invoke-NukeInDocker {
     param([string]$Image, [string[]]$Targets)
 
     # See Build-Image: relax EAP locally so native stderr from docker/Nuke isn't treated as terminating.
+    # TestNativeWrapper is skipped: the wrapper's symbol snapshot is CI's to enforce, a local toolchain
+    # can legitimately differ (e.g. adding __stack_chk_fail), and it says nothing about the package under test.
     $ErrorActionPreference = 'Continue'
     Write-Host "==> Running in ${Image}: $($Targets -join ' ')" -ForegroundColor Cyan
     & docker run --rm `
@@ -151,7 +153,7 @@ function Invoke-NukeInDocker {
         --env DD_INSTRUMENTATION_TELEMETRY_ENABLED=0 `
         --env NUKE_TELEMETRY_OPTOUT=1 `
         $Image `
-        dotnet /build/bin/Debug/_build.dll @Targets
+        dotnet /build/bin/Debug/_build.dll @Targets --skip TestNativeWrapper
     Invoke-Checked "docker run (${Image}: $($Targets -join ' '))"
 }
 

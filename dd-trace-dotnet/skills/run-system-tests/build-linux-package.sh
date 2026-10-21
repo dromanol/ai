@@ -56,7 +56,6 @@ if [[ "$CLEAN" -eq 1 && ( "$SKIP_MUSL" -eq 1 || "$REPACKAGE" -eq 1 ) ]]; then
     CLEAN=0
 fi
 
-DOTNETSDK_VERSION="10.0.100"
 # Resolve the dd-trace-dotnet repo from the CURRENT directory, not the script location: this file is a
 # managed copy under <clone>/.claude/skills/, so its own path says nothing about which repos to build.
 # Claude normally runs inside the tracer repo (or its git root). Override with DD_TRACE_ROOT.
@@ -83,6 +82,8 @@ if [[ -z "$ROOT_DIR" ]]; then
 fi
 ROOT_DIR="$(cd -- "$ROOT_DIR" &> /dev/null && pwd)"
 BUILD_DIR="$ROOT_DIR/tracer/build/_build"
+# Use the SDK the repo pins: a hardcoded version breaks the restore as soon as the repo targets a newer TFM.
+DOTNETSDK_VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$ROOT_DIR/global.json" | head -n 1)"
 OUTPUT_DIR="$ROOT_DIR/tracer/bin/artifacts/linux-$ARCH"
 
 ALPINE_IMAGE="dd-trace-dotnet/alpine-base"
@@ -117,6 +118,8 @@ clear_native_intermediates() {
 nuke_in_docker() {
     local image="$1"; shift
     echo "==> Running in ${image}: $*"
+    # The wrapper's symbol snapshot is CI's to enforce: a local toolchain can legitimately differ
+    # (e.g. adding __stack_chk_fail), and it says nothing about the package under test.
     docker run --rm \
         --mount "type=bind,source=$ROOT_DIR,target=/project" \
         --env NugetPackageDirectory=/project/packages \
@@ -124,7 +127,7 @@ nuke_in_docker() {
         --env DD_INSTRUMENTATION_TELEMETRY_ENABLED=0 \
         --env NUKE_TELEMETRY_OPTOUT=1 \
         "$image" \
-        dotnet /build/bin/Debug/_build.dll "$@"
+        dotnet /build/bin/Debug/_build.dll "$@" --skip TestNativeWrapper
 }
 
 # --- Preflight -----------------------------------------------------------------------------------
