@@ -5,7 +5,7 @@ Injects the curated global knowledge INDEX into the model's context in EVERY ses
 the repository. Prints a SessionStart `additionalContext` JSON object; stays silent (exit 0, no
 output) if the index can't be found or is empty.
 
-The knowledge lives in the SOURCE `ia` repo (not the plugin cache), so it persists across plugin
+The knowledge lives in the SOURCE `ai` repo (not the plugin cache), so it persists across plugin
 reinstalls and is committable. We resolve that source dir from the local marketplace registration.
 """
 import json
@@ -25,10 +25,10 @@ def get_cwd(event):
 
 
 def find_knowledge_dir(cwd):
-    """Return the global knowledge dir in the SOURCE ia repo, or None. Tries, in order:
+    """Return the global knowledge dir in the SOURCE ai repo, or None. Tries, in order:
     1. $KNOWLEDGE_BASE_DIR_COMMON override.
     2. dromanol marketplace source from ~/.claude/plugins/known_marketplaces.json (authoritative).
-    3. sibling `ia` repo next to the working repo.
+    3. sibling `ai` repo next to the working repo.
     """
     candidates = []
     env = os.environ.get("KNOWLEDGE_BASE_DIR_COMMON")
@@ -48,7 +48,7 @@ def find_knowledge_dir(cwd):
 
     if cwd:
         parent = os.path.dirname(os.path.normpath(cwd))
-        candidates.append(os.path.join(parent, "ia", "common", "skills", "knowledge-base", "knowledge"))
+        candidates.append(os.path.join(parent, "ai", "common", "skills", "knowledge-base", "knowledge"))
 
     for cand in candidates:
         if cand and os.path.isdir(cand):
