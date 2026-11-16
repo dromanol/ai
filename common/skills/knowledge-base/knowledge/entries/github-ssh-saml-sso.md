@@ -37,6 +37,13 @@ The URL GitHub's **Code** button shows (`git@github.com:ddoghq/...`) uses the wr
 the host: `git clone git@ddoghq.github.com:ddoghq/dd-go.git`. A browser 404 on a private repo usually
 means the browser session is on the other account.
 
+**`gh` has both accounts too, and the active one may be wrong.** `gh auth status` lists
+`daniel-romanolorente_ddog` and `dromanol`. With the managed account active, personal repos
+(`dromanol/ai`) fail with `GraphQL: Unauthorized: As an Enterprise Managed User, you cannot access this
+content`. Pick the account per command instead of switching globally:
+`GH_TOKEN=$(gh auth token --user dromanol) gh pr create ...` (or `--user daniel-romanolorente_ddog` for
+ddoghq).
+
 **dd-go moved to ddoghq.** `DataDog/dd-go` still exists, but it is frozen read-only ("🔴 FROZEN"). The
 live repo is `ddoghq/dd-go` (default branch `prod`), and PRs go there. On Windows a full checkout fails
 on paths containing `*`. Use a sparse cone checkout and `git config core.protectNTFS false` in that

@@ -10,7 +10,7 @@ entries. Repo-specific knowledge belongs in that repo's own `/project-knowledge`
 - [Keep all output concise](entries/concise-generated-text.md) — PRs, commits, comments, **and session replies/reports**: lead with the conclusion, trim words not facts
 - [Minimal code comments](entries/minimal-code-comments.md) — default to zero comments; only a *why* the code can't show, one line
 - [GitHub token via ddtool](entries/github-token-ddtool.md) — `ddtool auth github token` (defaults to DataDog org); first use needs `ddtool auth github login --org DataDog`
-- [SSH rejected by SAML SSO; two GitHub accounts](entries/github-ssh-saml-sso.md) — re-authorize the key for the org; `github.com` = dromanol/DataDog, `ddoghq.github.com` = _ddog/ddoghq; dd-go lives in ddoghq now
+- [SSH rejected by SAML SSO; two GitHub accounts](entries/github-ssh-saml-sso.md) — re-authorize the key for the org; `github.com` = dromanol/DataDog, `ddoghq.github.com` = _ddog/ddoghq; dd-go lives in ddoghq now; `gh` per account via `GH_TOKEN=$(gh auth token --user <acct>)`
 - [Benchmark regression triage](entries/benchmark-regression-triage.md) — cross-PR history + %→ns/op arithmetic tell a real CI regression from a miscalibrated baseline
 - [Bash tool is not PowerShell](entries/bash-tool-vs-powershell-syntax.md) — PowerShell here-strings `@'…'@` corrupt the argument silently in Bash; use a heredoc and verify
 - [Signed commit troubleshooting](entries/signed-commit-troubleshooting.md) — 1Password failures are transient: retry, never bypass signing; "No signature" is a verification gap
