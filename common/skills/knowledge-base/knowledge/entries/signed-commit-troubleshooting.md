@@ -53,3 +53,14 @@ git status -sb        # "## branch...origin/branch [ahead 1]" => nothing was pus
 ```
 
 Then simply retry the push. Only start investigating credentials if a second attempt fails the same way.
+
+## `communication with agent failed` together with WSL `WSAENOBUFS`
+
+```
+sign_and_send_pubkey: signing failed for ED25519 "...pub" from agent: communication with agent failed
+git@github.com: Permission denied (publickey).
+```
+
+If `wsl` fails at the same time with `Wsl/Service/WSAENOBUFS` ("insufficient buffer space"), Windows ran out of
+socket buffers. A retry does not help. `wsl --shutdown` fixed both. It also restarts the `docker-desktop` distro,
+so ask the user first. For the 1Password CLI (`op run`, approval prompts), see [[1password-cli-secrets]].
