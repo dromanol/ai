@@ -21,3 +21,4 @@ to any repo belongs in the global `/knowledge-base` instead.
 - [tracer/src TFMs stop at net6.0](entries/tracer-src-tfms.md) — `dotnet build -f net8.0` fails NETSDK1005; net8.0 tests run the net6.0 assembly
 - [Tracer setup in unit tests](entries/tracer-unit-test-tracer-setup.md) — `TracerHelper.Create(new())`; the testing-only ctor reads no env vars
 - [Branch naming convention](entries/branch-naming-convention.md) — `dani/area/nombre`, area = aap, iast, apm, ...
+- [Duplicate config telemetry vs CONV-1.1](entries/config-telemetry-duplicate-key.md) — re-reading a key another settings class records (e.g. `DD_APPSEC_ENABLED`) via tracked `config` breaks AsmTelemetryTests; read it untracked
