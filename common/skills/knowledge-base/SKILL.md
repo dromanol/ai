@@ -24,12 +24,12 @@ belong in that repo's `/project-knowledge` store instead.
 
 ## Resolve the store first
 
-It lives in the **source `ia` repo**, never the plugin cache (wiped on reinstall). In order:
+It lives in the **source `ai` repo**, never the plugin cache (wiped on reinstall). In order:
 
 1. `$KNOWLEDGE_BASE_DIR_COMMON`
 2. `.dromanol.installLocation` in `~/.claude/plugins/known_marketplaces.json` →
    `<that>/common/skills/knowledge-base/knowledge/`
-3. `..\ia\common\skills\knowledge-base\knowledge\` next to the working repo
+3. `..\ai\common\skills\knowledge-base\knowledge\` next to the working repo
 
 ```powershell
 $src = (Get-Content "$env:USERPROFILE\.claude\plugins\known_marketplaces.json" -Raw | ConvertFrom-Json).dromanol.installLocation
@@ -60,7 +60,7 @@ Curate; don't dump the transcript.
 3. An existing entry covers it → update that one. Merge, don't fork.
 4. Write `entries/<slug>.md`, refresh its pointer in `INDEX.md` (`- [Title](entries/slug.md) — hook`),
    cross-link with `[[slug]]`. Merge or prune if the index is growing.
-5. Report the slugs (one line each) and remind the user to commit `ia`.
+5. Report the slugs (one line each) and remind the user to commit `ai`.
 
 ## recall <topic>
 
@@ -73,7 +73,9 @@ Print `INDEX.md`.
 
 ## Notes
 
-- Writes go to the source `ia` repo. Never write knowledge into `${CLAUDE_SKILL_DIR}` — a runtime snapshot.
+- Writes go to the store resolved above. Don't locate it from `${CLAUDE_SKILL_DIR}`: with the local
+  directory marketplace that *is* the source, but if the plugin loads from `~/.claude/plugins/cache/` it is
+  a disposable copy.
 - `hooks/hooks.json` injects `INDEX.md` at SessionStart in every repo; `scripts/remind_capture.py` nudges
   a capture at PreCompact and names the current project's store too when it has one. Entries are read
   live from the source.

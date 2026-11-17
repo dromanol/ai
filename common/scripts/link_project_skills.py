@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
-"""SessionStart bootstrap: copy per-project skills from the canonical `ia` repo into the clone.
+"""SessionStart bootstrap: copy per-project skills from the canonical `ai` repo into the clone.
 
 The `common` plugin acts as a bootstrapper. At session start it copies the skills for the current
-project from the single source of truth -- the `ia` marketplace repo (`C:\\_dd\\git\\ia`) -- into the
+project from the single source of truth -- the `ai` marketplace repo (`C:\\_dd\\git\\ai`) -- into the
 working clone's `.claude/skills/`, which Claude Code auto-discovers. This means the external,
 personal per-project skills become first-class invocable WITHOUT registering a per-project plugin or
 marketplace, and there is exactly ONE place to edit them.
 
-    <ia>/<project>/skills/<name>/   ->   <clone>/.claude/skills/<name>/   (plain copy, source wins)
+    <ai>/<project>/skills/<name>/   ->   <clone>/.claude/skills/<name>/   (plain copy, source wins)
 
-This is the ONLY delivery path for per-project skills: `<ia>/<project>/` is a plain skill source, not a
+This is the ONLY delivery path for per-project skills: `<ai>/<project>/` is a plain skill source, not a
 plugin, and is deliberately absent from `.claude-plugin/marketplace.json`. Registering it as a plugin
 too would double-inject the project knowledge index and collide skill names.
 
 Design notes (by intent, not bugs):
-  * Source of truth is the canonical `ia` repo (resolved from the `dromanol` marketplace registration),
+  * Source of truth is the canonical `ai` repo (resolved from the `dromanol` marketplace registration),
     NOT a per-clone sibling. Every clone gets the same skills copied in.
   * The source wins: managed copies are refreshed every session; local edits to the copy are discarded.
-    Edit the skills in the `ia` repo, not in the clone.
+    Edit the skills in the `ai` repo, not in the clone.
   * Each managed copy carries a `.ia-managed` marker. A same-named directory WITHOUT the marker is a
     foreign skill (e.g. a repo's own committed `.claude/skills/<name>`) and is left untouched.
   * Junctions/symlinks left by the previous design are removed safely (the link only, never the target)
@@ -27,7 +27,7 @@ Design notes (by intent, not bugs):
   * Skills are enumerated at startup BEFORE this hook runs: a newly copied skill becomes invocable only
     on the NEXT session / `/reload-plugins`; refreshed existing ones work immediately.
 
-Strict no-op when the canonical `ia` has no `<project>/skills` for the current repo. Never blocks the
+Strict no-op when the canonical `ai` has no `<project>/skills` for the current repo. Never blocks the
 session; swallows all errors.
 """
 import json
@@ -66,10 +66,10 @@ def find_repo_root(cwd):
 
 
 def canonical_ia():
-    """Resolve the single source-of-truth `ia` repo. Tries, in order:
+    """Resolve the single source-of-truth `ai` repo. Tries, in order:
     1. $IA_ROOT override.
     2. `dromanol` marketplace installLocation/source from ~/.claude/plugins/known_marketplaces.json.
-    3. The `ia` dir derived from this script's own location (<ia>/common/scripts/this.py).
+    3. The `ai` dir derived from this script's own location (<ai>/common/scripts/this.py).
     """
     env = os.environ.get("IA_ROOT")
     if env and os.path.isdir(env):
@@ -234,7 +234,7 @@ def main():
         return
     src_skills = os.path.join(ia, project, "skills")
     if not os.path.isdir(src_skills):
-        return  # canonical ia has nothing for this project -> no-op
+        return  # canonical ai repo has nothing for this project -> no-op
 
     dest_dir = os.path.join(repo_root, ".claude", "skills")
     try:
@@ -263,7 +263,7 @@ def main():
             continue
         try:
             with open(os.path.join(dest, MARKER), "w", encoding="utf-8") as fh:
-                fh.write("Managed copy from {}\nDo not edit here; edit the source in the ia repo.\n".format(src))
+                fh.write("Managed copy from {}\nDo not edit here; edit the source in the ai repo.\n".format(src))
         except Exception:
             pass
         add_git_exclude(repo_root, name)

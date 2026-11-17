@@ -3,7 +3,7 @@
 
 When context is about to be compacted (a natural "long session / about to lose context" checkpoint),
 remind the model to capture reusable knowledge. Fires in every session, regardless of repo; when the
-canonical `ia` repo has a `project-knowledge` skill for the current project it also names that store,
+canonical `ai` repo has a `project-knowledge` skill for the current project it also names that store,
 so both tiers get a prompt from this single hook. Prints a plain reminder line (injected into context).
 """
 import json
@@ -26,7 +26,7 @@ def get_cwd():
 
 
 def project_with_knowledge(cwd):
-    """Return the current project's name if the canonical `ia` repo holds a knowledge base for it."""
+    """Return the current project's name if the canonical `ai` repo holds a knowledge base for it."""
     if not canonical_ia:
         return None
     try:

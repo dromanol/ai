@@ -25,12 +25,12 @@ belong in the global `/knowledge-base` instead — the names differ so the two a
 
 This skill runs as a **managed copy** under `<clone>/.claude/skills/project-knowledge/`, refreshed from
 source every session — **never write knowledge there, it is overwritten.** The store lives in the
-**source `ia` repo**. In order:
+**source `ai` repo**. In order:
 
 1. `$PROJECT_KNOWLEDGE_DIR`
 2. `.dromanol.installLocation` in `~/.claude/plugins/known_marketplaces.json` →
    `<that>/dd-trace-dotnet/skills/project-knowledge/knowledge/`
-3. `..\ia\dd-trace-dotnet\skills\project-knowledge\knowledge\` next to the dd-trace-dotnet repo
+3. `..\ai\dd-trace-dotnet\skills\project-knowledge\knowledge\` next to the dd-trace-dotnet repo
 
 ```powershell
 $src = (Get-Content "$env:USERPROFILE\.claude\plugins\known_marketplaces.json" -Raw | ConvertFrom-Json).dromanol.installLocation
@@ -61,7 +61,7 @@ Curate; don't dump the transcript.
 3. An existing entry covers it → update that one. Merge, don't fork.
 4. Write `entries/<slug>.md`, refresh its pointer in `INDEX.md` (`- [Title](entries/slug.md) — hook`),
    cross-link with `[[slug]]`. Merge or prune if the index is growing.
-5. Report the slugs (one line each) and remind the user to commit `ia`.
+5. Report the slugs (one line each) and remind the user to commit `ai`.
 
 ## recall <topic>
 
@@ -74,7 +74,7 @@ Print `INDEX.md`.
 
 ## Notes
 
-- Writes go to the source `ia` repo; the copies under `<clone>/.claude/skills/` and `${CLAUDE_SKILL_DIR}`
+- Writes go to the source `ai` repo; the copies under `<clone>/.claude/skills/` and `${CLAUDE_SKILL_DIR}`
   are runtime snapshots that get overwritten.
 - `common/scripts/link_project_skills.py` copies this skill in and injects `INDEX.md` at SessionStart. It
   keys off the repo directory name, so it only fires in dd-trace-dotnet. Entries are read live.
