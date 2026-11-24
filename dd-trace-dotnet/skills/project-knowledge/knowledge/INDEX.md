@@ -10,7 +10,7 @@ to any repo belongs in the global `/knowledge-base` instead.
 - [BuildNativeWrapper produces the LD_PRELOAD ApiWrapper](entries/build-native-wrapper.md) — omit it and Linux packaging fails with `ln: No such file`
 - [glibc tar bundles musl → two-stage build](entries/glibc-tar-bundles-musl.md) — CMake libdatadog FetchContent libc-contamination gotcha
 - [Where the Linux package is produced](entries/linux-package-targets.md) — PackageTracerHome / ZipMonitoringHomeLinux, output paths
-- [Running system-tests locally](entries/system-tests-local-run-gotchas.md) — force `missing_feature` tests with `-F`, WSL traps, `-i runner` on pip timeout, LF rewrite after the Linux build
+- [Running system-tests locally](entries/system-tests-local-run-gotchas.md) — force `missing_feature` tests with `-F`, WSL traps, `-i runner` on pip timeout, LF rewrite after the Linux build, THREAD_CONTEXT_SHARING impossible on Docker Desktop (validate in PR CI), reuse master CI packages
 - [PR description + labels](entries/pr-description-template.md) — follow `.github/pull_request_template.md` schema, keep it short, add `area:asm` for AppSec
 - [BuildAspNetIntegrationTests doesn't rebuild native/managed core](entries/build-target-doesnt-rebuild-native.md) — must run BuildTracerHome first or edits silently don't apply
 - [IIS-hosted profiler: native file logging is silent](entries/iis-native-file-logging-silent.md) — spdlog file sink writes nothing under IIS-Express; use a raw std::wofstream bypass logger

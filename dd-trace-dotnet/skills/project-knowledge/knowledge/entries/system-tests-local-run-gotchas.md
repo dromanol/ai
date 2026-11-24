@@ -40,4 +40,21 @@ git commit ...
 git checkout -- .
 ```
 
+**`THREAD_CONTEXT_SHARING` (CWS) can't run on Docker Desktop/WSL2.** The scenario aborts before
+starting the weblog with `CWS did not report a successful self test within 90s`: system-probe starts
+("runtime security started") but never sends its `self_test` event. Cause: Docker Desktop's daemon lives
+in the isolated `docker-desktop` distro, so `--pid=host` gives that distro's PID namespace (~40
+processes, PID 1 `/initd`, none of the Ubuntu distro's), not the kernel's root one. It's the same
+problem as the Kata docker-in-docker setup in `docs/understand/scenarios/thread_context_sharing.md`,
+with no `/vm-host` equivalent. Two more traps: the test is `bug` for agents `<7.85.0`
+(`manifests/agent.yml`), and a cached `datadog/agent:latest` can be older, so `docker pull` it first.
+To validate, use the system-tests PR CI: the `System Tests (dotnet, dev)` end-to-end jobs run
+`THREAD_CONTEXT_SHARING` with a dd-trace-dotnet master build (look for `tests/cws/test_thread_context_sharing.py .`
+in the job log). A real Linux host should also work.
+
+**Skip building the package when master already has your change.** The Azure DevOps build of a master
+commit publishes `linux-packages-linux-x64` (`datadog-dotnet-apm-<version>.tar.gz`), downloadable
+without auth from `_apis/build/builds/<id>/artifacts`. Grep the extracted `Datadog.Trace.dll` for a new
+method name to confirm it has the change.
+
 Related: [[linux-package-targets]], [[glibc-tar-bundles-musl]], [[build-native-wrapper]]
